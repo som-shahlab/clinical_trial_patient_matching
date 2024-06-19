@@ -1,0 +1,18 @@
+\begin{table}
+\caption{Simultaneously considering multiple notes/criteria hurts performance.}
+\label{tab:prompt_strat}
+\begin{tabular}{lllllll}
+\toprule
+Model & Prec. & Rec. & n2c2-Macro-F1 & n2c2-Micro-F1 & cost & tokens \\
+\midrule
+GPT-3.5 all_criteria_all_notes & 0.76 & 0.69 & 0.53 & 0.77 & \$1.24 & 0.64M \\
+GPT-3.5 all_criteria_each_notes & 0.74 & 0.80 & 0.59 & 0.80 & \$2.41 & 1.31M \\
+GPT-3.5 each_criteria_all_notes & 0.76 & 0.82 & 0.63 & 0.82 & \$13.19 & 6.66M \\
+GPT-3.5 each_criteria_each_notes & 0.73 & 0.88 & 0.60 & 0.81 & \$17.61 & 9.04M \\
+GPT-4 all_criteria_all_notes & 0.89 & 0.87 & 0.80 & 0.90 & \$74.77 & 0.69M \\
+GPT-4 all_criteria_each_notes & 0.91 & 0.92 & 0.81 & 0.93 & \$133.08 & 1.32M \\
+GPT-4 each_criteria_all_notes & 0.94 & 0.86 & 0.85 & 0.92 & \$780.99 & 6.61M \\
+GPT-4 each_criteria_each_notes & 0.92 & 0.89 & 0.82 & 0.92 & \$1021.65 & 8.93M \\
+\bottomrule
+\end{tabular}
+\end{table}

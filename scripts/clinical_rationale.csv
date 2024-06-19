@@ -1,0 +1,52 @@
+Criterion,Assessment,is_correct,0
+ABDOMINAL,Correct,0,12
+ABDOMINAL,Correct,1,29
+ABDOMINAL,Incorrect,0,1
+ABDOMINAL,Incorrect,1,1
+ADVANCED-CAD,Correct,0,11
+ADVANCED-CAD,Correct,1,27
+ADVANCED-CAD,Incorrect,0,10
+ADVANCED-CAD,Incorrect,1,2
+ADVANCED-CAD,Partially Correct,0,1
+ADVANCED-CAD,Partially Correct,1,1
+ALCOHOL-ABUSE,Correct,1,27
+ALCOHOL-ABUSE,Incorrect,0,1
+ALCOHOL-ABUSE,Incorrect,1,3
+ASP-FOR-MI,Correct,0,3
+ASP-FOR-MI,Correct,1,30
+ASP-FOR-MI,Incorrect,0,1
+CREATININE,Correct,0,3
+CREATININE,Correct,1,26
+CREATININE,Incorrect,0,3
+CREATININE,Incorrect,1,2
+CREATININE,Partially Correct,0,1
+CREATININE,Partially Correct,1,2
+DIETSUPP-2MOS,Correct,0,7
+DIETSUPP-2MOS,Correct,1,26
+DIETSUPP-2MOS,Incorrect,0,1
+DIETSUPP-2MOS,Incorrect,1,2
+DIETSUPP-2MOS,Partially Correct,0,3
+DIETSUPP-2MOS,Partially Correct,1,2
+DRUG-ABUSE,Correct,0,1
+DRUG-ABUSE,Correct,1,30
+ENGLISH,Correct,1,17
+ENGLISH,Incorrect,0,3
+ENGLISH,Partially Correct,0,1
+ENGLISH,Partially Correct,1,13
+HBA1C,Correct,0,10
+HBA1C,Correct,1,27
+HBA1C,Incorrect,0,3
+HBA1C,Partially Correct,0,2
+HBA1C,Partially Correct,1,3
+KETO-1YR,Correct,1,29
+KETO-1YR,Incorrect,1,1
+MAJOR-DIABETES,Correct,0,12
+MAJOR-DIABETES,Correct,1,29
+MAJOR-DIABETES,Partially Correct,1,1
+MAKES-DECISIONS,Correct,0,3
+MAKES-DECISIONS,Correct,1,20
+MAKES-DECISIONS,Incorrect,0,1
+MAKES-DECISIONS,Partially Correct,1,10
+MI-6MOS,Correct,0,2
+MI-6MOS,Correct,1,29
+MI-6MOS,Partially Correct,1,1

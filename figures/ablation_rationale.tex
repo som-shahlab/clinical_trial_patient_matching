@@ -1,0 +1,18 @@
+\begin{table}
+\caption{Without Rationale.}
+\label{tab:ablation_rationale}
+\begin{tabular}{lllllll}
+\toprule
+Model & Prec. & Rec. & n2c2-Macro-F1 & n2c2-Micro-F1 & cost & tokens \\
+\midrule
+GPT-3.5 all_criteria_all_notes & 0.80 & 0.72 & 0.58 & 0.80 & \$1.20 & 0.61M \\
+GPT-3.5 all_criteria_each_notes & 0.81 & 0.81 & 0.64 & 0.84 & \$2.15 & 1.14M \\
+GPT-3.5 each_criteria_all_notes & 0.71 & 0.85 & 0.58 & 0.79 & \$13.01 & 6.55M \\
+GPT-3.5 each_criteria_each_notes & 0.73 & 0.87 & 0.61 & 0.82 & \$16.86 & 8.59M \\
+GPT-4 all_criteria_all_notes & 0.88 & 0.90 & 0.80 & 0.91 & \$72.12 & 0.65M \\
+GPT-4 all_criteria_each_notes & 0.87 & 0.93 & 0.79 & 0.91 & \$126.42 & 1.22M \\
+GPT-4 each_criteria_all_notes & 0.92 & 0.88 & 0.84 & 0.91 & \$775.37 & 6.55M \\
+GPT-4 each_criteria_each_notes & 0.92 & 0.91 & 0.83 & 0.93 & \$993.65 & 8.60M \\
+\bottomrule
+\end{tabular}
+\end{table}
