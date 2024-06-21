@@ -1,3 +1,4 @@
+import collections
 import pickle
 from dotenv import load_dotenv
 load_dotenv()
@@ -84,7 +85,7 @@ def embed(text: str, model: AutoModel, tokenizer: AutoTokenizer) -> torch.Tensor
     embedding = torch.nn.functional.normalize(embedding, p=2, dim=0)
     return embedding
 
-def calc_metrics(true_labels: np.ndarray, preds: np.ndarray) -> Dict[str, float]:
+def calc_metrics(true_labels: np.ndarray, preds: np.ndarray) -> Tuple[Dict[str, float]]:
     accuracy = sklearn.metrics.accuracy_score(true_labels, preds)
     precision = sklearn.metrics.precision_score(true_labels, preds)
     recall = sklearn.metrics.recall_score(true_labels, preds)
@@ -92,6 +93,28 @@ def calc_metrics(true_labels: np.ndarray, preds: np.ndarray) -> Dict[str, float]
     met_f1 = sklearn.metrics.f1_score(true_labels, preds, average='binary')
     notmet_f1 = sklearn.metrics.f1_score(1-true_labels, 1-preds, average='binary')
     n2c2_f1 = (met_f1 + notmet_f1) / 2
+
+    # Bootstrap
+    bootstraps = collections.defaultdict(list)
+    np.random.seed(0)
+    for i in range(N_BOOTSTRAP_SAMPLES):
+        b_idxs = np.random.randint(low=0, high=preds.shape[0], size=preds.shape[0])
+        bootstraps['accuracy'].append(sklearn.metrics.accuracy_score(true_labels[b_idxs], preds[b_idxs]))
+        bootstraps['precision'].append(sklearn.metrics.precision_score(true_labels[b_idxs], preds[b_idxs]))
+        bootstraps['recall'].append(sklearn.metrics.recall_score(true_labels[b_idxs], preds[b_idxs]))
+        bootstraps['micro_f1'].append(sklearn.metrics.f1_score(true_labels[b_idxs], preds[b_idxs], average='micro'))
+        b_met_f1 = sklearn.metrics.f1_score(true_labels[b_idxs], preds[b_idxs], average='binary')
+        b_notmet_f1 = sklearn.metrics.f1_score(1-true_labels[b_idxs], 1-preds[b_idxs], average='binary')
+        bootstraps['n2c2-met-f1'].append(b_met_f1)
+        bootstraps['n2c2-notmet-f1'].append(b_notmet_f1)
+        bootstraps['n2c2-micro-f1'].append((b_met_f1 + b_notmet_f1) / 2)
+    bootstraps = dict(bootstraps)
+    bootstrap_ranges = {}
+    for key, vals in bootstraps.items():
+        bootstrap_ranges[key] = {
+            'lower' : np.percentile(vals, 2.5),
+            'upper' : np.percentile(vals, 97.5),
+        }
     return {
         'accuracy' : accuracy,
         'precision' : precision,
@@ -105,8 +128,8 @@ def calc_metrics(true_labels: np.ndarray, preds: np.ndarray) -> Dict[str, float]
         # is the correct "Micro-F1" metric to use.
         # `n2c2_f1 = sklearn.metrics.f1_score(df['true_label'], df['is_met'], average='macro')`
         'n2c2-micro-f1' : n2c2_f1,
-    }
-    
+    }, bootstrap_ranges, bootstraps
+
 def get_relevant_docs_for_criteria(dataloader: XMLDataLoader,
                                    collection: chromadb.Collection, 
                                     patient_id: int,
@@ -235,9 +258,6 @@ def _batch_query_openai_worker(args):
                          n_retries=2, 
                          is_frequency_penalty=is_frequency_penalty,
                          is_add_global_decision =is_add_global_decision)
-        os.makedirs('./outputs/', exist_ok=True)
-        with open(f'./outputs/{idx}.pkl') as fd:
-            pickle.dump(q, fd)
         return q
     except openai.RateLimitError:
         print("Rate limit exceeded -- waiting 30 seconds before retrying")
