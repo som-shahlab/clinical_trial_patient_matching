@@ -13,19 +13,27 @@ from utils.helpers import CriterionAssessment, UsageStat
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Evaluate a class-prevalence predictor')
+    parser.add_argument('--is_exclusion', action="store_true", default=False, help='If specfied, then use custom EXCLUSION criteria')
     args = parser.parse_args()
     return args
 
 if __name__ == '__main__':
     args = parse_args()
-    file_name = './outputs/baseline/baseline'
+    is_exclusion = args.is_exclusion
+    file_name = f'./outputs-results/baseline{"-exclusion" if is_exclusion else ""}/baseline'
     os.makedirs(os.path.dirname(file_name), exist_ok=True)
 
     path_to_train_data: str = './data/train'
     path_to_test_data: str = './data/n2c2-t1_gold_standard_test_data/test'
     
     # Load train data
-    train_dataloader = XMLDataLoader(path_to_train_data)
+    if is_exclusion:
+        print("==>", "Using custom EXCLUSION criteria")
+        train_dataloader = ExclusionDataLoader(path_to_train_data)
+        test_dataloader = ExclusionDataLoader(path_to_test_data)
+    else:
+        train_dataloader = XMLDataLoader(path_to_train_data)
+        test_dataloader = XMLDataLoader(path_to_test_data)
     train_dataset = train_dataloader.load_data()
     
     # Determine prevalence of MET/NOT MET for each criterion, then choose most prevalent as prediction
@@ -35,6 +43,8 @@ if __name__ == '__main__':
     }
     for patient in train_dataset:
         for criterion, is_met in patient['labels'].items():
+            if criterion not in criterion_2_counts: 
+                continue
             criterion_2_counts[criterion][is_met] += 1
     criterion_2_pred: Dict[str, int] = {
         criterion: 1 if criterion_2_counts[criterion][1] > criterion_2_counts[criterion][0] else 0
@@ -45,7 +55,6 @@ if __name__ == '__main__':
         f.write(str(criterion_2_pred))
     
     # Load test data
-    test_dataloader = XMLDataLoader(path_to_test_data)
     test_dataset = test_dataloader.load_data()
     
     # For each patient...
