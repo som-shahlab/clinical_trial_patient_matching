@@ -174,9 +174,29 @@ class XMLDataLoader:
     def remove_excessive_newlines(self, text: str) -> str:
         text = text.replace('\n\n\n', '\n')
         return text
-    
-    
 
+class ExclusionDataLoader(XMLDataLoader):
+    def __init__(self, 
+                 path_to_folder: str, 
+                 is_convert_to_numbers=True,
+                 is_split_text=True,
+                 is_remove_excessive_new_lines=True):
+        super().__init__(path_to_folder, is_convert_to_numbers, is_split_text, is_remove_excessive_new_lines)
+
+        self.criteria = [
+            'EXCLUDED-SLEEP',
+        ]
+        self.original_definitions = {
+            "EXCLUDED-SLEEP" : "History of more than mild obstructive sleep apnea that is untreated"
+        }
+        # Custom definitions for better prompts
+        self.definitions = {
+            "EXCLUDED-SLEEP" : "History of more than mild obstructive sleep apnea that is untreated. If the patient is not tolerating cpap or the note does not explicitly mention they have been treated, then assume that their apnea is untreated."
+        }
+        # Decide how to "pool" preds per note for a single label for the overall patient
+        self.criteria_2_agg: Dict[str, str] = {
+            "EXCLUDED-SLEEP": "max",
+        }
 
 class XMLDataLoaderKoopman:
     def __init__(self, 
