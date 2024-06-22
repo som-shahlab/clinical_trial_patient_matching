@@ -13,7 +13,7 @@ from utils.pipelines import (
 from tqdm import tqdm
 import argparse
 from typing import Dict, List, Any, Optional, Set
-from utils.data_loader import XMLDataLoader
+from utils.data_loader import XMLDataLoader, ExclusionDataLoader
 from utils.types import  UsageStat
 from utils.helpers import get_relevant_docs_for_criteria, load_model, load_collection
 
@@ -47,6 +47,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--is_use_orig_defs', action="store_true", default=False, help='If specfied, then use original n2c2 criteria definitions')
     parser.add_argument('--is_exclude_rationale', action="store_true", default=False, help='If specfied, then DO NOT include rationale in JSON output of LLM')
     parser.add_argument('--n_few_shot_examples', type=int, default=None, help='If specfied (int), then provide that number of few shot examples')
+    parser.add_argument('--is_exclusion', action="store_true", default=False, help='If specfied, then use custom EXCLUSION criteria')
     args = parser.parse_args()
     return args
 
@@ -61,12 +62,13 @@ if __name__ == '__main__':
     strategy: str = args.strategy
     criterion: Optional[str] = args.criterion
     is_use_orig_defs: bool = args.is_use_orig_defs
+    is_exclusion: bool = args.is_exclusion
     is_exclude_rationale: bool = args.is_exclude_rationale
     n_few_shot_examples: Optional[int] = args.n_few_shot_examples
     tensor_parallel_size: int = args.tensor_parallel_size
     patient_range: Optional[str] = args.patient_range
     date_time = pd.Timestamp.now().strftime("%Y-%m-%d-%H-%M-%S")
-    file_name: str = f"./outputs/{date_time}/{llm_model.replace('/', '_')}|{embed_model.replace('/', '_')}|{n_chunks if n_chunks is not None else threshold}|{strategy}|{args.split}{'|chunk' if not is_chunk_keep_full_note else ''}|criteria-{criterion if criterion else 'all'}{'|r_' + str(patient_range) if patient_range else ''}"
+    file_name: str = f"./outputs/{date_time}{'-exclusion' if is_exclusion else ''}/{llm_model.replace('/', '_')}|{embed_model.replace('/', '_')}|{n_chunks if n_chunks is not None else threshold}|{strategy}|{args.split}{'|chunk' if not is_chunk_keep_full_note else ''}|criteria-{criterion if criterion else 'all'}{'|r_' + str(patient_range) if patient_range else ''}"
     os.makedirs(os.path.dirname(file_name), exist_ok=True)
 
     # sanity checks
@@ -81,7 +83,11 @@ if __name__ == '__main__':
     collection = load_collection(embed_model.split("/")[-1])
 
     # Load data
-    dataloader = XMLDataLoader(path_to_data)
+    if is_exclusion:
+        print("==>", "Using custom EXCLUSION criteria")
+        dataloader = ExclusionDataLoader(path_to_data)
+    else:
+        dataloader = XMLDataLoader(path_to_data)
     dataset = dataloader.load_data()
     
     # Filter by criterion (if specfied)
