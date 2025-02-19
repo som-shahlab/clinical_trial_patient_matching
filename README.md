@@ -171,3 +171,20 @@ To generate figures, run the following script.
 python scripts/make_figures.py
 python scripts/make_clinician_rationale_figure.py
 ```
+
+# Citation
+
+If you found this work helpful, please consider citing us!
+
+```
+@article{wornow2025zero,
+  title={Zero-shot clinical trial patient matching with llms},
+  author={Wornow, Michael and Lozano, Alejandro and Dash, Dev and Jindal, Jenelle and Mahaffey, Kenneth W and Shah, Nigam H},
+  journal={NEJM AI},
+  volume={2},
+  number={1},
+  pages={AIcs2400360},
+  year={2025},
+  publisher={Massachusetts Medical Society}
+}
+```
