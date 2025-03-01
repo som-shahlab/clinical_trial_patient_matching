@@ -1,3 +1,9 @@
+# Clinical Trial Patient Matching with LLMs
+
+<img width="1052" alt="Screenshot 2025-02-28 at 4 17 14 PM" src="https://github.com/user-attachments/assets/3781e35a-b9dd-4137-8617-cca6f5d3bbf2" />
+
+Paper: [https://arxiv.org/abs/2402.05125](https://arxiv.org/abs/2402.05125)
+
 # Installation
 
 How to install the repo:
